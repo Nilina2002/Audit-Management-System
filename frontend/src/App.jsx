@@ -7,7 +7,7 @@ import FunctionBar from "./components/FunctionBar.jsx";
 import CreateCustomerForm from "./pages/createCustomerForm";
 const App = () => {
   return (
-    <>
+    <div style={{ fontFamily: "Poppins, sans-serif" }}>
       <NavBar />
       <FunctionBar />
       <Routes>
@@ -15,7 +15,7 @@ const App = () => {
         <Route path="/manageCustomers" element={<CreateCustomer />} />
         <Route path="/createCustomerForm" element={<CreateCustomerForm />} />
       </Routes>
-    </>
+    </div>
   );
 };
 

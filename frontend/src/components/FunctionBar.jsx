@@ -4,9 +4,9 @@ import { FaFilter, FaFileImport, FaFileExport, FaBars } from "react-icons/fa";
 
 const FunctionBar = () => {
   return (
-    <div className="bg-gray-700 text-white py-2 shadow-sm">
+    <div className="bg-gray-700 text-white py-3 shadow-sm">
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-1">
           {/* Search Bar */}
           <input
             type="text"
@@ -25,11 +25,11 @@ const FunctionBar = () => {
             to="/manageCustomers"
             className="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded inline-block text-center"
           >
-            Manage Customers
+            Customers
           </Link>
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex items-center space-x-1">
           {/* Action Buttons */}
           <button className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded">
             <FaBars className="inline-block pr-1 size-4" />
