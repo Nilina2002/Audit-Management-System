@@ -5,8 +5,8 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    cnNo: {
-      type: Number,
+    department: {
+      type: String,
       required: true,
     },
     address: {
@@ -29,7 +29,7 @@ const customerSchema = new mongoose.Schema(
         required: true,
       },
     },
-    image: {
+    companySize: {
       type: String,
       required: true,
     },

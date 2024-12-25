@@ -15,10 +15,10 @@ export const createCustomer = async (req, res) => {
   const customer = req.body;
   if (
     !customer.name ||
-    !customer.cnNo ||
+    !customer.department ||
     !customer.address ||
     !customer.email ||
-    !customer.image
+    !customer.companySize
   ) {
     return res
       .status(400)
@@ -61,14 +61,14 @@ export const updateCustomer = async (req, res) => {
 };
 
 export const deleteCustomer = async (req, res) => {
-  const { cnNo } = req.params;
+  const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res
       .status(404)
       .json({ success: false, message: "Invalid product id" });
   }
   try {
-    await Customer.findByIdAndDelete(cnNo);
+    await Customer.findByIdAndDelete(id);
     res
       .status(200)
       .json({ success: true, message: "Customer deleted successfully" });

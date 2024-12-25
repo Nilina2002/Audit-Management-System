@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import HomePage from "./pages/HomePage";
-import CreateCustomer from "./pages/CreateCustomer";
+import CreateCustomer from "./pages/ManageCustomer.jsx";
 import FunctionBar from "./components/FunctionBar.jsx";
 import CreateCustomerForm from "./pages/createCustomerForm";
 const App = () => {
