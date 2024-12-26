@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const CreateCustomerDashboard = () => {
   const [customers, setCustomers] = useState([]);
@@ -36,11 +37,10 @@ const CreateCustomerDashboard = () => {
         method: "DELETE",
       });
 
-      // Remove the deleted customer from the state
+      // Remove the deleted customer with animation
       setCustomers((prevCustomers) =>
         prevCustomers.filter((customer) => customer._id !== id)
       );
-      alert("Customer deleted successfully.");
     } catch (err) {
       alert("Failed to delete customer: " + err.message);
     }
@@ -89,46 +89,52 @@ const CreateCustomerDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {customers.map((customer, index) => (
-                  <tr
-                    key={customer._id}
-                    className={`${
-                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                    } cursor-pointer`}
-                  >
-                    <Link
-                      to={`/CustomerDetails/${customer._id}`}
-                      className="contents"
+                <AnimatePresence>
+                  {customers.map((customer, index) => (
+                    <motion.tr
+                      key={customer._id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: -100 }}
+                      transition={{ duration: 0.5 }}
+                      className={`${
+                        index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                      }`}
                     >
-                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                        {customer._id}
-                      </td>
-                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                        {customer.name}
-                      </td>
-                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                        {customer.department}
-                      </td>
-                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                        {customer.email?.mainEmail}
-                      </td>
-                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                        {customer.address?.mainAddress}
-                      </td>
-                    </Link>
-                    <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent Link from triggering on delete button click
-                          handleDelete(customer._id);
-                        }}
-                        className="border p-2 border-red-500 rounded-lg text-red-500 hover:text-white hover:bg-red-500 transition-colors  ml-4"
+                      <Link
+                        to={`/CustomerDetails/${customer._id}`}
+                        className="contents"
                       >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                        <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                          {customer._id}
+                        </td>
+                        <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                          {customer.name}
+                        </td>
+                        <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                          {customer.department}
+                        </td>
+                        <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                          {customer.email?.mainEmail}
+                        </td>
+                        <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                          {customer.address?.mainAddress}
+                        </td>
+                      </Link>
+                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent Link from triggering on delete button click
+                            handleDelete(customer._id);
+                          }}
+                          className="border p-2 border-red-500 rounded-lg text-red-500 hover:text-white hover:bg-red-500 transition-colors ml-4"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </AnimatePresence>
               </tbody>
             </table>
           ) : (
