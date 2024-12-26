@@ -20,7 +20,7 @@ const FunctionBar = () => {
   };
 
   return (
-    <div className="bg-gray-700 text-white py-3 shadow-sm">
+    <div className="bg-gray-700 text-white py-3 shadow-sm sticky top-0 z-50">
       <div className="container mx-auto px-4 flex items-center justify-between">
         <div className="flex items-center space-x-1">
           {/* Back Button */}
