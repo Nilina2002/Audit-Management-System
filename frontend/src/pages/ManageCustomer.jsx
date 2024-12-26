@@ -23,6 +23,29 @@ const CreateCustomerDashboard = () => {
     fetchData();
   }, []);
 
+  // Handle delete customer
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this customer?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await fetch(`http://localhost:5000/api/customers/${id}`, {
+        method: "DELETE",
+      });
+
+      // Remove the deleted customer from the state
+      setCustomers((prevCustomers) =>
+        prevCustomers.filter((customer) => customer._id !== id)
+      );
+      alert("Customer deleted successfully.");
+    } catch (err) {
+      alert("Failed to delete customer: " + err.message);
+    }
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="container mx-auto px-4 py-8">
@@ -67,42 +90,44 @@ const CreateCustomerDashboard = () => {
               </thead>
               <tbody>
                 {customers.map((customer, index) => (
-                  <tr
+                  <Link
                     key={customer._id}
-                    className={`${
-                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                    } hover:bg-gray-100 transition-all duration-300`}
+                    to={`/customerDetails/${customer._id}`}
+                    className="hover:bg-gray-100 transition-all duration-300"
                   >
-                    <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                      {customer._id}
-                    </td>
-                    <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                      {customer.name}
-                    </td>
-                    <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                      {customer.department}
-                    </td>
-                    <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                      {customer.email?.mainEmail}
-                    </td>
-                    <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                      {customer.address?.mainAddress}
-                    </td>
-                    <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                      <Link
-                        to={`/updateCustomer/${customer._id}`}
-                        className="text-blue-500 hover:text-blue-700 hover:underline"
-                      >
-                        Edit
-                      </Link>
-                      <Link
-                        to={`/deleteCustomer/${customer._id}`}
-                        className="text-red-500 hover:text-red-700 hover:underline ml-4"
-                      >
-                        Delete
-                      </Link>
-                    </td>
-                  </tr>
+                    <tr
+                      className={`${
+                        index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                      } cursor-pointer`}
+                    >
+                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                        {customer._id}
+                      </td>
+                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                        {customer.name}
+                      </td>
+                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                        {customer.department}
+                      </td>
+                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                        {customer.email?.mainEmail}
+                      </td>
+                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                        {customer.address?.mainAddress}
+                      </td>
+                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent Link from triggering on delete button click
+                            handleDelete(customer._id);
+                          }}
+                          className="border p-2 border-red-500 rounded-lg text-red-500 hover:text-white hover:bg-red-500 transition-colors  ml-4"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  </Link>
                 ))}
               </tbody>
             </table>

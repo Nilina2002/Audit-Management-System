@@ -77,3 +77,26 @@ export const deleteCustomer = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+export const getCustomerById = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Invalid customer id" });
+  }
+
+  try {
+    const customer = await Customer.findById(id);
+    if (!customer) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Customer not found" });
+    }
+    res.status(200).json({ success: true, data: customer });
+  } catch (error) {
+    console.error("Error in fetching customer: ", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
