@@ -10,7 +10,7 @@ import CustomerDetails from "./pages/CustomerDetails.jsx";
 
 const App = () => {
   return (
-    <div style={{ fontFamily: "Poppins, sans-serif" }}>
+    <div style={{ fontFamily: "Raleway, sans-serif" }}>
       <NavBar />
       <FunctionBar />
       <Routes>

@@ -90,15 +90,15 @@ const CreateCustomerDashboard = () => {
               </thead>
               <tbody>
                 {customers.map((customer, index) => (
-                  <Link
+                  <tr
                     key={customer._id}
-                    to={`/customerDetails/${customer._id}`}
-                    className="hover:bg-gray-100 transition-all duration-300"
+                    className={`${
+                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    } cursor-pointer`}
                   >
-                    <tr
-                      className={`${
-                        index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                      } cursor-pointer`}
+                    <Link
+                      to={`/CustomerDetails/${customer._id}`}
+                      className="contents"
                     >
                       <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
                         {customer._id}
@@ -115,19 +115,19 @@ const CreateCustomerDashboard = () => {
                       <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
                         {customer.address?.mainAddress}
                       </td>
-                      <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent Link from triggering on delete button click
-                            handleDelete(customer._id);
-                          }}
-                          className="border p-2 border-red-500 rounded-lg text-red-500 hover:text-white hover:bg-red-500 transition-colors  ml-4"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  </Link>
+                    </Link>
+                    <td className="border-b border-gray-200 px-4 py-3 text-sm text-gray-700">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent Link from triggering on delete button click
+                          handleDelete(customer._id);
+                        }}
+                        className="border p-2 border-red-500 rounded-lg text-red-500 hover:text-white hover:bg-red-500 transition-colors  ml-4"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>

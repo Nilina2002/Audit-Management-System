@@ -102,14 +102,29 @@ const CreateCustomerForm = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Department
                 </label>
-                <input
-                  type="text"
+                <select
                   name="department"
                   value={formData.department}
                   onChange={handleInputChange}
-                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500  hover:shadow-sm hover:shadow-blue-500/50"
+                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500 hover:shadow-sm hover:shadow-blue-500/50"
                   required
-                />
+                >
+                  <option value="" disabled className="text-gray-500">
+                    Select Department
+                  </option>
+                  <option value="Food" className="pb-3">
+                    Food
+                  </option>
+                  <option value="Organic" className="pb-3">
+                    Organic
+                  </option>
+                  <option value="Textile" className="pb-3">
+                    Textile
+                  </option>
+                  <option value="IT" className="pb-3">
+                    IT
+                  </option>
+                </select>
               </div>
             </>
           )}
