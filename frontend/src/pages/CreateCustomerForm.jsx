@@ -1,298 +1,221 @@
 import React, { useState } from "react";
-import img from "../assets/logo.png";
+import axios from "axios";
 
 const CreateCustomerForm = () => {
-  // State to hold form data
-  const [customerData, setCustomerData] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     department: "",
-    mainEmail: "",
-    invoiceEmail: "",
-    mainAddress: "",
-    invoiceAddress: "",
+    address: {
+      mainAddress: "",
+      invoiceAddress: "",
+    },
+    email: {
+      mainEmail: "",
+      invoiceEmail: "",
+    },
     companySize: "",
   });
 
-  // State for form submission status
-  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
   const [error, setError] = useState(null);
-  const [currentStep, setCurrentStep] = useState(1); // Track the current step
-  const totalSteps = 3; // Total number of steps in the form
+  const [success, setSuccess] = useState(null);
 
-  // Handle form change
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCustomerData({
-      ...customerData,
-      [name]: value,
-    });
+
+    if (name.includes("address.") || name.includes("email.")) {
+      const [field, subField] = name.split(".");
+      setFormData((prevState) => ({
+        ...prevState,
+        [field]: {
+          ...prevState[field],
+          [subField]: value,
+        },
+      }));
+    } else {
+      setFormData((prevState) => ({ ...prevState, [name]: value }));
+    }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    // Form data
-    const formData = new FormData();
-    for (const key in customerData) {
-      if (customerData[key]) {
-        formData.append(key, customerData[key]);
-      }
-    }
+    setError(null);
+    setSuccess(null);
 
     try {
-      const response = await fetch("http://localhost:5000/api/customers", {
-        method: "POST",
-        body: formData,
+      const response = await axios.post(
+        "http://localhost:5000/api/customers",
+        formData
+      );
+      setSuccess("Customer created successfully!");
+      setFormData({
+        name: "",
+        department: "",
+        address: { mainAddress: "", invoiceAddress: "" },
+        email: { mainEmail: "", invoiceEmail: "" },
+        companySize: "",
       });
-      const data = await response.json();
-      if (data.success) {
-        // Redirect to the dashboard or display a success message
-        // history.push("/createCustomerDashboard");
-      } else {
-        setError("Error creating customer");
-      }
-    } catch (err) {
-      setError("An error occurred");
-    } finally {
-      setLoading(false);
+      setStep(1);
+    } catch (error) {
+      setError(error.response?.data?.message || "An error occurred");
     }
   };
 
-  // Move to the next step
-  const nextStep = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
-    }
-  };
+  const nextStep = () => setStep((prevStep) => prevStep + 1);
+  const prevStep = () => setStep((prevStep) => prevStep - 1);
 
-  // Move to the previous step
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
+  const titles = ["Basic Information", "Address Details", "Contact Details"];
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      {/* Left Section - Form */}
-      <div className="bg-white p-8 shadow-md rounded-lg w-full max-w-md transition-all duration-500 ease-in-out transform hover:scale-105">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full border max-w-lg bg-white p-8 rounded-lg shadow-md">
+        <span className="text-2xl font-bold text-cyan-900 p-4 text-center block">
           Create Customer
-        </h2>
-
-        {/* Step Titles */}
-        {currentStep === 1 && (
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">
-            Step 1: Customer Information
-          </h3>
+        </span>
+        <h2 className="text-xl font-semibold  mb-6 pt-6">{titles[step - 1]}</h2>
+        {error && (
+          <div className="mb-4 text-red-600 bg-red-100 p-3 rounded">
+            {error}
+          </div>
         )}
-        {currentStep === 2 && (
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">
-            Step 2: Contact & Address Details
-          </h3>
+        {success && (
+          <div className="mb-4 text-green-600 bg-green-100 p-3 rounded">
+            {success}
+          </div>
         )}
-        {currentStep === 3 && (
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">
-            Step 3: Company Size
-          </h3>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {currentStep === 1 && (
+        <form onSubmit={handleSubmit}>
+          {step === 1 && (
             <>
-              {/* Step 1: Name, Department */}
-              <div className="transition-opacity duration-300 ease-in">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="name"
-                >
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Name
                 </label>
                 <input
                   type="text"
-                  id="name"
                   name="name"
-                  value={customerData.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 hover:shadow-md focus:shadow-blue-400"
-                  placeholder="Enter customer name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="w-full  border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500  hover:shadow-sm hover:shadow-blue-500/50"
                   required
                 />
               </div>
-
-              <div className="transition-opacity duration-300 ease-in">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="department"
-                >
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Department
                 </label>
                 <input
                   type="text"
-                  id="department"
                   name="department"
-                  value={customerData.department}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 hover:shadow-md focus:shadow-blue-400"
-                  placeholder="Enter department"
+                  value={formData.department}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500  hover:shadow-sm hover:shadow-blue-500/50"
                   required
                 />
               </div>
             </>
           )}
-
-          {currentStep === 2 && (
+          {step === 2 && (
             <>
-              {/* Step 2: Emails, Addresses */}
-              <div className="transition-opacity duration-300 ease-in">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="mainEmail"
-                >
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Main Address
+                </label>
+                <input
+                  type="text"
+                  name="address.mainAddress"
+                  value={formData.address.mainAddress}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500  hover:shadow-sm hover:shadow-blue-500/50"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Invoice Address
+                </label>
+                <input
+                  type="text"
+                  name="address.invoiceAddress"
+                  value={formData.address.invoiceAddress}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500  hover:shadow-sm hover:shadow-blue-500/50"
+                  required
+                />
+              </div>
+            </>
+          )}
+          {step === 3 && (
+            <>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Main Email
                 </label>
                 <input
                   type="email"
-                  id="mainEmail"
-                  name="mainEmail"
-                  value={customerData.mainEmail}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 hover:shadow-md focus:shadow-blue-400"
-                  placeholder="Enter main email"
+                  name="email.mainEmail"
+                  value={formData.email.mainEmail}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500  hover:shadow-sm hover:shadow-blue-500/50"
                   required
                 />
               </div>
-
-              <div className="transition-opacity duration-300 ease-in">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="invoiceEmail"
-                >
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Invoice Email
                 </label>
                 <input
                   type="email"
-                  id="invoiceEmail"
-                  name="invoiceEmail"
-                  value={customerData.invoiceEmail}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 hover:shadow-md focus:shadow-blue-400"
-                  placeholder="Enter invoice email"
+                  name="email.invoiceEmail"
+                  value={formData.email.invoiceEmail}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500  hover:shadow-sm hover:shadow-blue-500/50"
                   required
                 />
               </div>
-
-              <div className="transition-opacity duration-300 ease-in">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="mainAddress"
-                >
-                  Main Address
-                </label>
-                <textarea
-                  id="mainAddress"
-                  name="mainAddress"
-                  value={customerData.mainAddress}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 hover:shadow-md focus:shadow-blue-400"
-                  placeholder="Enter main address"
-                  required
-                />
-              </div>
-
-              <div className="transition-opacity duration-300 ease-in">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="invoiceAddress"
-                >
-                  Invoice Address
-                </label>
-                <textarea
-                  id="invoiceAddress"
-                  name="invoiceAddress"
-                  value={customerData.invoiceAddress}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 hover:shadow-md focus:shadow-blue-400"
-                  placeholder="Enter invoice address"
-                  required
-                />
-              </div>
-            </>
-          )}
-
-          {currentStep === 3 && (
-            <>
-              {/* Step 3: Company Size */}
-              <div className="transition-opacity duration-300 ease-in">
-                <label
-                  className="block text-sm font-semibold text-gray-700"
-                  htmlFor="companySize"
-                >
-                  Company Size (Number of Employees)
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Company Size
                 </label>
                 <input
-                  type="number"
-                  id="companySize"
+                  type="text"
                   name="companySize"
-                  value={customerData.companySize}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 hover:shadow-md focus:shadow-blue-400"
-                  placeholder="Enter company size"
+                  value={formData.companySize}
+                  onChange={handleInputChange}
+                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-blue-500 focus:border-blue-500  hover:shadow-sm hover:shadow-blue-500/50"
                   required
                 />
               </div>
             </>
           )}
-
-          {/* Navigation Buttons */}
           <div className="flex justify-between mt-6">
-            {currentStep > 1 && (
+            {step > 1 && (
               <button
                 type="button"
                 onClick={prevStep}
-                className="bg-gray-300 text-gray-700 py-2 px-4 rounded-lg transition-all duration-300 ease-in-out hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 hover:shadow-sm hover:shadow-gray-500/50"
               >
-                Previous
+                Back
               </button>
             )}
-            {currentStep < totalSteps ? (
+            {step < 3 && (
               <button
                 type="button"
                 onClick={nextStep}
-                className="bg-blue-500 text-white py-2 px-4 rounded-lg transition-all duration-300 ease-in-out hover:bg-blue-600"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600  hover:shadow-sm hover:shadow-blue-500/50"
               >
                 Next
               </button>
-            ) : (
+            )}
+            {step === 3 && (
               <button
                 type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded-lg transition-all duration-300 ease-in-out hover:bg-blue-600"
-                disabled={loading}
+                className="px-4 py-2 bg-green-800 text-white rounded-lg hover:bg-green-900 hover:shadow-sm hover:shadow-green-500/50"
               >
-                {loading ? (
-                  <span className="spinner-border animate-spin mr-2">🔄</span>
-                ) : (
-                  "Create Customer"
-                )}
+                Submit
               </button>
             )}
           </div>
-
-          {/* Error Message */}
-          {error && <p className="text-red-500 mt-4">{error}</p>}
         </form>
       </div>
-
-      {/* Right Section - Image */}
-      {/* <div className="hidden md:flex justify-center items-center bg-blue-100 w-full max-w-md">
-        <img
-          src={img}
-          alt="Customer"
-          className="w-3/4 h-auto object-cover rounded-lg"
-        />
-      </div> */}
     </div>
   );
 };
