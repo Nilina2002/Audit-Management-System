@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import _bg from "../assets/bg.png";
 
 const CreateCustomerForm = () => {
   const [formData, setFormData] = useState({
@@ -82,7 +83,10 @@ const CreateCustomerForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-200">
+    <div
+      className="flex items-center justify-center min-h-screen bg-gray-200 bg-stretch"
+      style={{ backgroundImage: `url(${_bg})` }}
+    >
       <motion.div
         className="w-full max-w-lg border-cyan-900 border-2 bg-white p-8 rounded-lg shadow-md"
         initial={{ opacity: 0, scale: 0.9 }}

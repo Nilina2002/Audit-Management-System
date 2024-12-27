@@ -30,22 +30,22 @@ const FunctionBar = ({ onSearch, exportData }) => {
     }
   };
 
-  // const handleFileImport = (e) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = (event) => {
-  //       const data = new Uint8Array(event.target.result);
-  //       const workbook = XLSX.read(data, { type: "array" });
-  //       const sheetName = workbook.SheetNames[0];
-  //       const sheet = workbook.Sheets[sheetName];
-  //       const json = XLSX.utils.sheet_to_json(sheet);
-  //       console.log("Imported Data:", json); // Handle imported data here
-  //     };
-  //     reader.readAsArrayBuffer(file);
-  //   }
-  //   setImportModalVisible(false); // Close modal after file upload
-  // };
+  const handleFileImport = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const json = XLSX.utils.sheet_to_json(sheet);
+        console.log("Imported Data:", json); // Handle imported data here
+      };
+      reader.readAsArrayBuffer(file);
+    }
+    setImportModalVisible(false); // Close modal after file upload
+  };
 
   const handleExport = () => {
     const worksheet = XLSX.utils.json_to_sheet(exportData);
