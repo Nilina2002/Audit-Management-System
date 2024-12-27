@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   FaFilter,
@@ -8,8 +8,9 @@ import {
   FaArrowLeft,
 } from "react-icons/fa";
 
-const FunctionBar = () => {
+const FunctionBar = ({ onSearch }) => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleNewClick = () => {
     navigate("/createCustomerForm");
@@ -17,6 +18,13 @@ const FunctionBar = () => {
 
   const handleBackClick = () => {
     navigate(-1); // Navigate back to the previous page
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    if (onSearch) {
+      onSearch(e.target.value); // Pass the search query to the parent component
+    }
   };
 
   return (
@@ -32,11 +40,13 @@ const FunctionBar = () => {
           </button>
 
           {/* Search Bar */}
-          <input
+          {/* <input
             type="text"
+            value={searchQuery}
+            onChange={handleSearchChange}
             placeholder="Search..."
             className="bg-gray-600 text-white placeholder-gray-400 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-gray-500"
-          />
+          /> */}
 
           {/* Navigation Links */}
           <Link
